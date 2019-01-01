@@ -41,7 +41,7 @@ class ProcessTestSpec extends WordSpec {
 
       "process correctly" in {
 
-        val parsed = processor.parseRaw(json)
+        val parsed = processor.fromString(json)
         val expectedResult: JsResult[SimpleFlat] = JsSuccess(wanted_simple)
         assert(parsed == expectedResult)
       }
@@ -59,7 +59,7 @@ class ProcessTestSpec extends WordSpec {
            |}""".stripMargin
 
       "process correctly" in {
-        val parsed = processor.parseRaw(json)
+        val parsed = processor.fromString(json)
         val expectedResult: JsResult[SimpleFlat] = JsSuccess(wanted_simple)
 
         assert(parsed == expectedResult)
@@ -80,7 +80,7 @@ class ProcessTestSpec extends WordSpec {
 
       "process correctly" in {
         assertThrows[JsonInvalidFileException] {
-          processor.parseRaw(json)
+          processor.fromString(json)
         }
       }
     }
@@ -97,7 +97,7 @@ class ProcessTestSpec extends WordSpec {
 
       "raise error" in {
         assertThrows[JsonInvalidFileException] {
-          processor.parseRaw(json)
+          processor.fromString(json)
         }
       }
     }
@@ -114,7 +114,7 @@ class ProcessTestSpec extends WordSpec {
 
       "process correctly" in {
 
-        val parsed = processor.parseRaw(json)
+        val parsed = processor.fromString(json)
         val expectedResult: JsResult[SimpleFlat] = JsSuccess(wanted_simple)
         assert(parsed == expectedResult)
       }
@@ -132,7 +132,7 @@ class ProcessTestSpec extends WordSpec {
 
       "process correctly" in {
 
-        val parsed = processor.parseRaw(json)
+        val parsed = processor.fromString(json)
         val expectedResult: JsResult[SimpleFlat] = JsSuccess(wanted_simple)
         assert(parsed == expectedResult)
       }
@@ -150,7 +150,7 @@ class ProcessTestSpec extends WordSpec {
 
       "raise error" in {
         assertThrows[JsonInvalidFileException] {
-          processor.parseRaw(json)
+          processor.fromString(json)
         }
       }
     }
@@ -167,7 +167,7 @@ class ProcessTestSpec extends WordSpec {
 
       "raise error" in {
         assertThrows[JsonInvalidFileException] {
-          processor.parseRaw(json)
+          processor.fromString(json)
         }
       }
     }
