@@ -138,7 +138,7 @@ class ProcessTestSpec extends WordSpec {
       }
     }
 
-    "malformed uuid" should {
+    "non formatted uuid" should {
       val json =
         s"""
            |{"string_item": "$string_val",
@@ -154,5 +154,23 @@ class ProcessTestSpec extends WordSpec {
         }
       }
     }
+
+    "slightly malformed uuid" should {
+      val json =
+        s"""
+           |{"string_item": "$string_val",
+           |"int_item": $int_val,
+           |"long_item": $long_val,
+           |"datetime_item":"2018-09-10T19:11:17.423-07:00",
+           |"uuid_item": "cf85a8da-d051-4f46-97bd-7db0fdc7c3d"
+           |}""".stripMargin
+
+      "raise error" in {
+        assertThrows[JsonInvalidFileException] {
+          processor.parseRaw(json)
+        }
+      }
+    }
+
   }
 }

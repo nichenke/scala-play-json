@@ -43,7 +43,7 @@ class ProcessJson {
        (JsPath \ "int_item").read[Int](readIntFromString)) and
       (JsPath \ "long_item").read[Long] and
       (JsPath \ "datetime_item").read[Instant] and
-      (JsPath \ "uuid_item").read[UUID]
+      (JsPath \ "uuid_item").read[UUID](new Reads.UUIDReader(true))
   )(SimpleFlat.apply _)
 }
 
