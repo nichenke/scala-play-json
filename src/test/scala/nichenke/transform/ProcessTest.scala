@@ -1,6 +1,7 @@
 package nichenke.transform
 
 import java.time.Instant
+import java.util.UUID
 import org.scalatest.WordSpec
 import play.api.libs.json._
 
@@ -22,7 +23,10 @@ class ProcessTestSpec extends WordSpec {
     val time_val = "2018-09-11T02:11:17.423Z"
     val datetime = Instant.parse(time_val)
 
-    val wanted_simple: SimpleFlat = SimpleFlat(string_val, int_val, long_val, datetime)
+    val uuid_val = "cf85a8da-d051-4f46-97bd-7db0fdc7c3de"
+    val uuid = UUID.fromString(uuid_val)
+
+    val wanted_simple: SimpleFlat = SimpleFlat(string_val, int_val, long_val, datetime, uuid)
 
     "nominal" should {
 
@@ -31,7 +35,8 @@ class ProcessTestSpec extends WordSpec {
           |{"string_item": "$string_val",
           |"int_item": $int_val,
           |"long_item": $long_val,
-          |"datetime_item": "$time_val"
+          |"datetime_item": "$time_val",
+          |"uuid_item": "$uuid_val"
           |}""".stripMargin
 
       "process correctly" in {
@@ -49,7 +54,8 @@ class ProcessTestSpec extends WordSpec {
            |{"string_item": "$string_val",
            |"int_item": "${int_val.toString}",
            |"long_item": $long_val,
-           |"datetime_item": "$time_val"
+           |"datetime_item": "$time_val",
+           |"uuid_item": "$uuid_val"
            |}""".stripMargin
 
       "process correctly" in {
@@ -68,7 +74,8 @@ class ProcessTestSpec extends WordSpec {
            |{"string_item": "$string_val",
            |"int_item": $int_val,
            |"long_item": "${long_val.toString}",
-           |"datetime_item": "$time_val"
+           |"datetime_item": "$time_val",
+           |"uuid_item": "$uuid_val"
            |}""".stripMargin
 
       "process correctly" in {
@@ -84,7 +91,8 @@ class ProcessTestSpec extends WordSpec {
            |{"string_item": "$string_val",
            |"int_item": 12.34,
            |"long_item": "4147483647.99",
-           |"datetime_item": "$time_val"
+           |"datetime_item": "$time_val",
+           |"uuid_item": "$uuid_val"
            |}""".stripMargin
 
       "raise error" in {
@@ -100,7 +108,8 @@ class ProcessTestSpec extends WordSpec {
            |{"string_item": "$string_val",
            |"int_item": $int_val,
            |"long_item": $long_val,
-           |"datetime_item":1536631877423
+           |"datetime_item":1536631877423,
+           |"uuid_item": "$uuid_val"
            |}""".stripMargin
 
       "process correctly" in {
@@ -117,7 +126,8 @@ class ProcessTestSpec extends WordSpec {
            |{"string_item": "$string_val",
            |"int_item": $int_val,
            |"long_item": $long_val,
-           |"datetime_item":"2018-09-10T19:11:17.423-07:00"
+           |"datetime_item":"2018-09-10T19:11:17.423-07:00",
+           |"uuid_item": "$uuid_val"
            |}""".stripMargin
 
       "process correctly" in {
@@ -125,6 +135,23 @@ class ProcessTestSpec extends WordSpec {
         val parsed = processor.parseRaw(json)
         val expectedResult: JsResult[SimpleFlat] = JsSuccess(wanted_simple)
         assert(parsed == expectedResult)
+      }
+    }
+
+    "malformed uuid" should {
+      val json =
+        s"""
+           |{"string_item": "$string_val",
+           |"int_item": $int_val,
+           |"long_item": $long_val,
+           |"datetime_item":"2018-09-10T19:11:17.423-07:00",
+           |"uuid_item": "deadbeef"
+           |}""".stripMargin
+
+      "raise error" in {
+        assertThrows[JsonInvalidFileException] {
+          processor.parseRaw(json)
+        }
       }
     }
   }
