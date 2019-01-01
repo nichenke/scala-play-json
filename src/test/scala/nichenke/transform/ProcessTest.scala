@@ -14,23 +14,24 @@ class ProcessTestSpec extends WordSpec {
 
     val processor = new ProcessJson
 
-    // in epoch: 1536631877423L
-    val time_text = "2018-09-11T02:11:17.423Z"
-    val datetime = Instant.parse(time_text)
+    val string_val = "this is a string"
+    val int_val = 1234
+    val long_val = 4147483647L
 
-    val wanted_simple: SimpleFlat = SimpleFlat("this is a string",
-      1234,
-      4147483647L,
-      datetime)
+    // in epoch: 1536631877423L
+    val time_val = "2018-09-11T02:11:17.423Z"
+    val datetime = Instant.parse(time_val)
+
+    val wanted_simple: SimpleFlat = SimpleFlat(string_val, int_val, long_val, datetime)
 
     "nominal" should {
 
       val json =
-        """
-          |{"string_item": "this is a string",
-          |"int_item": 1234,
-          |"long_item": 4147483647,
-          |"datetime_item":"2018-09-11T02:11:17.423Z"
+        s"""
+          |{"string_item": "$string_val",
+          |"int_item": $int_val,
+          |"long_item": $long_val,
+          |"datetime_item": "$time_val"
           |}""".stripMargin
 
       "process correctly" in {
@@ -44,12 +45,12 @@ class ProcessTestSpec extends WordSpec {
     "int is a string" should {
 
       val json =
-        """
-          |{"string_item": "this is a string",
-          |"int_item": "1234",
-          |"long_item": 4147483647,
-          |"datetime_item":"2018-09-11T02:11:17.423Z"
-          |}""".stripMargin
+        s"""
+           |{"string_item": "$string_val",
+           |"int_item": "${int_val.toString}",
+           |"long_item": $long_val,
+           |"datetime_item": "$time_val"
+           |}""".stripMargin
 
       "process correctly" in {
         val parsed = processor.parseRaw(json)
@@ -63,12 +64,12 @@ class ProcessTestSpec extends WordSpec {
     "long is a string" should {
 
       val json =
-        """
-          |{"string_item": "this is a string",
-          |"int_item": 1234,
-          |"long_item": "4147483647",
-          |"datetime_item":"2018-09-11T02:11:17.423Z"
-          |}""".stripMargin
+        s"""
+           |{"string_item": "$string_val",
+           |"int_item": $int_val,
+           |"long_item": "${long_val.toString}",
+           |"datetime_item": "$time_val"
+           |}""".stripMargin
 
       "process correctly" in {
         assertThrows[JsonInvalidFileException] {
@@ -79,13 +80,12 @@ class ProcessTestSpec extends WordSpec {
 
     "int and long are floats" should {
       val json =
-        """
-          |{"string_item": "this is a string",
-          |"int_item": 12.34,
-          |"long_item": "4147483647.99",
-          |"datetime_item":"2018-09-11T02:11:17.423Z"
-          |}""".stripMargin
-
+        s"""
+           |{"string_item": "$string_val",
+           |"int_item": 12.34,
+           |"long_item": "4147483647.99",
+           |"datetime_item": "$time_val"
+           |}""".stripMargin
 
       "raise error" in {
         assertThrows[JsonInvalidFileException] {
@@ -96,12 +96,12 @@ class ProcessTestSpec extends WordSpec {
 
     "datetime is an epoch" should {
       val json =
-        """
-          |{"string_item": "this is a string",
-          |"int_item": 1234,
-          |"long_item": 4147483647,
-          |"datetime_item":1536631877423
-          |}""".stripMargin
+        s"""
+           |{"string_item": "$string_val",
+           |"int_item": $int_val,
+           |"long_item": $long_val,
+           |"datetime_item":1536631877423
+           |}""".stripMargin
 
       "process correctly" in {
 
@@ -113,12 +113,12 @@ class ProcessTestSpec extends WordSpec {
 
     "datetime is not in UTC" should {
       val json =
-        """
-          |{"string_item": "this is a string",
-          |"int_item": 1234,
-          |"long_item": 4147483647,
-          |"datetime_item":"2018-09-10T19:11:17.423-07:00"
-          |}""".stripMargin
+        s"""
+           |{"string_item": "$string_val",
+           |"int_item": $int_val,
+           |"long_item": $long_val,
+           |"datetime_item":"2018-09-10T19:11:17.423-07:00"
+           |}""".stripMargin
 
       "process correctly" in {
 
@@ -127,6 +127,5 @@ class ProcessTestSpec extends WordSpec {
         assert(parsed == expectedResult)
       }
     }
-
   }
 }
