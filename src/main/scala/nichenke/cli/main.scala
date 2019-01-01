@@ -3,7 +3,6 @@ package nichenke.cli
 import java.io.File
 import scopt.OptionParser
 
-
 case class Config(verbose: Boolean = false,
                   debug: Boolean = false,
                   files: Seq[File] = Seq())
@@ -15,6 +14,7 @@ object main extends App {
     // TODO: can we get the program name and version from somewhere nicer ?
     head("json1", "1.x")
 
+    // TODO: added debug and verbose from docs, wire into something interesting
     opt[Unit]("debug")
       .hidden()
       .action((_, c) => c.copy(debug = true))
