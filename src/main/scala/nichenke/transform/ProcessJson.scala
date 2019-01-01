@@ -29,6 +29,15 @@ class ProcessJson {
   }
 
 
+  /* TODO
+   * Right now we'll throw an exception on the first bad record in this iterator, bailing out there.
+   * Do we want to try and process the entire file ?
+   */
+  def parseMany(many: Iterator[String]): Array[JsResult[SimpleFlat]] = {
+    many.map(parseRaw).toArray
+  }
+
+
   val readIntFromString: Reads[Int] = implicitly[Reads[String]]
     .map(x => Try(x.toInt))
     .collect (JsonValidationError(Seq("Parsing error"))){
