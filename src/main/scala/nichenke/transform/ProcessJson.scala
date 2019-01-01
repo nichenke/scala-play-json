@@ -1,5 +1,6 @@
 package nichenke.transform
 
+import java.time.Instant
 import scala.util.{Try, Success}
 import play.api.libs.json._
 import play.api.libs.json.Reads._
@@ -39,7 +40,8 @@ class ProcessJson {
     (JsPath \ "string_item").read[String] and
       ((JsPath \ "int_item").read[Int] or
        (JsPath \ "int_item").read[Int](readIntFromString)) and
-      (JsPath \ "long_item").read[Long]
+      (JsPath \ "long_item").read[Long] and
+      (JsPath \ "datetime_item").read[Instant]
   )(SimpleFlat.apply _)
 }
 
