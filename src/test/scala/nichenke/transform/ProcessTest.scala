@@ -45,23 +45,22 @@ class ProcessTestSpec extends WordSpec {
       "int and long are floats" should {
         val json = """{"string_item": "this is a string", "int_item": 1234.455, "long_item": 4.147483647}"""
 
-        // TODO we don't raise an error, so need to do error count checks or something
-        // -- starting to get into a proper API space here
         "raise error" in {
-          processor.parseRaw(json)
+          assertThrows[JsonInvalidFileException] {
+            processor.parseRaw(json)
+          }
         }
       }
 
       "int and long are string floats" should {
         val json = """{"string_item": "this is a string", "int_item": "1234.455", "long_item": "4.147483647"}"""
 
-        // TODO we don't raise an error, so need to do error count checks or something
-        // -- starting to get into a proper API space here
         "raise error" in {
-          processor.parseRaw(json)
+          assertThrows[JsonInvalidFileException] {
+            processor.parseRaw(json)
+          }
         }
       }
-
     }
   }
 }

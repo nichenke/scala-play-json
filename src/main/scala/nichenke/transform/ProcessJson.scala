@@ -14,23 +14,15 @@ import nichenke.transform.models.SimpleFlat
 class ProcessJson {
 
   def parseRaw(incoming: String): JsResult[SimpleFlat] = {
-    // TODO catch parse error and don't print the contents
     val json: JsValue  = Json.parse(incoming)
 
-    /* TODO Neat, we can match on the errors but what should we be doing in both cases for a production app?
-     * Things to consider:
-     *  - logging all errors from each record (will see multiple validations if there are problems)
-     *  - What is the best way for us to error out if we see errors? If we can't read/validate the incoming data
-     *    it seems like we should drop the entire thing, perhaps with an error code to route to DLQ ?
+    /* TODO
+     * log all errors
      */
     json.validate[SimpleFlat] match {
-      case s: JsSuccess[String] =>
-        println("Name: " + s.get)
-        s
+      case s: JsSuccess[SimpleFlat] => s
       case e: JsError =>
-        e.errors.map(println)
-        println("Errors: " + JsError.toJson(e).toString())
-        e
+        throw JsonInvalidFileException(JsError.toJson(e).toString())
     }
   }
 
@@ -50,3 +42,7 @@ class ProcessJson {
       (JsPath \ "long_item").read[Long]
   )(SimpleFlat.apply _)
 }
+
+
+case class JsonInvalidFileException(message: String, cause: Throwable = null)
+  extends RuntimeException(message: String, cause: Throwable)
