@@ -1,13 +1,16 @@
 package nichenke.cli
 
 import java.io.File
+
+import org.apache.logging.log4j.scala.{Logging, LoggingContext}
 import scopt.OptionParser
+
 
 case class Config(verbose: Boolean = false,
                   debug: Boolean = false,
                   files: Seq[File] = Seq())
 
-object main extends App {
+object main extends App with Logging {
   val parser = new OptionParser[Config]("json1") {
     override def showUsageOnError = true
 
@@ -30,9 +33,13 @@ object main extends App {
       .text("JSON files to process")
   }
 
+  logger.debug("parsing config options")
   parser.parse(args, Config()) match {
     case Some(config) =>
-      config.files.foreach(println)
+      config.files.map { fname =>
+        LoggingContext += ("some" -> "value")
+        logger.info(s"processing file: ${fname}")
+      }
     case None =>
       // arguments are bad, error message will have been displayed
   }
